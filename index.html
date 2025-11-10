@@ -226,23 +226,31 @@
     const inputs = document.querySelectorAll('#questions input');
     let score = 0;
 
-    inputs.forEach((input, i) => {
-      const userAnswer = parseFloat(input.value);
-      input.classList.remove('correct', 'incorrect');
-      const existing = input.parentElement.querySelector('.correct-answer-text');
-      if (existing) existing.remove();
+    function submitTest() {
+  clearInterval(timerInterval);
+  const inputs = document.querySelectorAll('#questions input');
+  let score = 0;
 
-      if (userAnswer === correctAnswers[i]) {
-        input.classList.add('correct');
-        score++;
-      } else {
-        input.classList.add('incorrect');
-        const correction = document.createElement('span');
-        correction.className = 'correct-answer-text';
-        correction.textContent = `(Correct: ${correctAnswers[i]})`;
-        input.parentElement.appendChild(correction);
-      }
-    });
+  inputs.forEach((input, i) => {
+    const userAnswer = parseFloat(input.value);
+    input.classList.remove('correct', 'incorrect');
+    const existing = input.parentElement.querySelector('.correct-answer-text');
+    if (existing) existing.remove();
+
+    if (userAnswer === correctAnswers[i]) {
+      input.classList.add('correct');
+      score++;
+    } else {
+      input.classList.add('incorrect');
+      const correction = document.createElement('span');
+      correction.className = 'correct-answer-text';
+      correction.textContent = `(Correct: ${correctAnswers[i]})`;
+      input.parentElement.appendChild(correction);
+    }
+
+    // ✅ Disable editing
+    input.disabled = true;
+  });
 
     document.getElementById('resultMessage').textContent = `🎉 You got ${score} out of ${correctAnswers.length} correct!`;
   }
