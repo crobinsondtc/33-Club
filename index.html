@@ -142,7 +142,7 @@
       <p>🧮 You will have <strong>90 seconds</strong> to answer as many questions as you can.</p>
       <p>⏱️ The timer will start as soon as you press the <strong>Start</strong> button.</p>
       <p>🔒 You can also press <strong>Submit</strong> early if you're finished.</p>
-      <p>✅ You'll get your score instantly. 
+      <p>✅ You'll get your score instantly.</p>
       <p>❌ Incorrect answers will be shown with the correct result.</p>
     </div>
     <button class="button" onclick="startTest()">Start</button>
@@ -151,7 +151,7 @@
   <!-- Test screen -->
   <div id="testScreen" class="hidden">
     <h1>WSQ 33 Club Test</h1>
-    <div id="timer">Time left: 1:30</div>
+    <div id="timer" class="timer">Time left: 1:30</div>
     <form id="testForm" onsubmit="event.preventDefault(); submitTest();">
       <div class="question-grid" id="questions"></div>
       <button type="submit" class="button">Submit Answers</button>
@@ -162,32 +162,32 @@
 
 <script>
   const questions = [
-  "Half of 2", "Double 9", "Double 50",
-  "Double 1", "Half of 4", "Half of 18",
-  "Half of 100", "Half of 10", "Double 7",
-  "Double 25", "Half of 6", "6 + 8",
-  "7 + 3", "Double 2", "Half of 12",
-  "Double 5", "Half of 20", "14 – 5",
-  "Half of 8", "17 – 11", "Double 3",
-  "6 + 9", "Double 9", "8 + 7",
-  "Double 4", "19 – 12", "Half of 16",
-  "Half of 14", "Double 8", "15 + 4",
-  "17 – 9", "Half of 5", "Double 10"
-];
-  const correctAnswers = [
-  1, 18, 100,
-  2, 2, 9,
-  50, 5, 14,
-  50, 3, 14,
-  10, 4, 6,
-  10, 10, 9,
-  4, 6, 6,
-  15, 18, 15,
-  8, 7, 8,
-  7, 16, 19,
-  8, 2.5, 20
-];
+    "Half of 2", "Double 9", "Double 50",
+    "Double 1", "Half of 4", "Half of 18",
+    "Half of 100", "Half of 10", "Double 7",
+    "Double 25", "Half of 6", "6 + 8",
+    "7 + 3", "Double 2", "Half of 12",
+    "Double 5", "Half of 20", "14 – 5",
+    "Half of 8", "17 – 11", "Double 3",
+    "6 + 9", "Double 9", "8 + 7",
+    "Double 4", "19 – 12", "Half of 16",
+    "Half of 14", "Double 8", "15 + 4",
+    "17 – 9", "Half of 5", "Double 10"
+  ];
 
+  const correctAnswers = [
+    1, 18, 100,
+    2, 2, 9,
+    50, 5, 14,
+    50, 3, 14,
+    10, 4, 6,
+    10, 10, 9,
+    4, 6, 6,
+    15, 18, 15,
+    8, 7, 8,
+    7, 16, 19,
+    8, 2.5, 20
+  ];
 
   let timerInterval;
 
@@ -196,6 +196,7 @@
     document.getElementById('testScreen').classList.remove('hidden');
 
     const questionsContainer = document.getElementById('questions');
+    questionsContainer.innerHTML = ""; // just in case
     questions.forEach((q, i) => {
       const div = document.createElement('div');
       div.className = 'question';
@@ -203,7 +204,7 @@
       questionsContainer.appendChild(div);
     });
 
-    startTimer(90); // 1 minutes in seconds
+    startTimer(90); // 90 seconds
   }
 
   function startTimer(duration) {
@@ -226,33 +227,30 @@
     const inputs = document.querySelectorAll('#questions input');
     let score = 0;
 
-    function submitTest() {
-  clearInterval(timerInterval);
-  const inputs = document.querySelectorAll('#questions input');
-  let score = 0;
+    inputs.forEach((input, i) => {
+      const userAnswer = parseFloat(input.value);
+      input.classList.remove('correct', 'incorrect');
 
-  inputs.forEach((input, i) => {
-    const userAnswer = parseFloat(input.value);
-    input.classList.remove('correct', 'incorrect');
-    const existing = input.parentElement.querySelector('.correct-answer-text');
-    if (existing) existing.remove();
+      const existing = input.parentElement.querySelector('.correct-answer-text');
+      if (existing) existing.remove();
 
-    if (userAnswer === correctAnswers[i]) {
-      input.classList.add('correct');
-      score++;
-    } else {
-      input.classList.add('incorrect');
-      const correction = document.createElement('span');
-      correction.className = 'correct-answer-text';
-      correction.textContent = `(Correct: ${correctAnswers[i]})`;
-      input.parentElement.appendChild(correction);
-    }
+      if (userAnswer === correctAnswers[i]) {
+        input.classList.add('correct');
+        score++;
+      } else {
+        input.classList.add('incorrect');
+        const correction = document.createElement('span');
+        correction.className = 'correct-answer-text';
+        correction.textContent = `(Correct: ${correctAnswers[i]})`;
+        input.parentElement.appendChild(correction);
+      }
 
-    // ✅ Disable editing
-    input.disabled = true;
-  });
+      // Disable editing after submission
+      input.disabled = true;
+    });
 
-    document.getElementById('resultMessage').textContent = `🎉 You got ${score} out of ${correctAnswers.length} correct!`;
+    document.getElementById('resultMessage').textContent =
+      `🎉 You got ${score} out of ${correctAnswers.length} correct!`;
   }
 </script>
 
